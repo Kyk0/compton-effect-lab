@@ -1,4 +1,4 @@
-import BackButton from "./BackButton";
+import BackButton from './BackButton';
 
 export default function InstructionsPage() {
   return (
@@ -6,7 +6,7 @@ export default function InstructionsPage() {
       {/* background */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url(background.png)" }}
+        style={{ backgroundImage: 'url(background.png)' }}
       />
       <div className="absolute inset-0 backdrop-blur-sm bg-black/70 z-0" />
 
@@ -23,6 +23,11 @@ export default function InstructionsPage() {
           />
         </div>
       </div>
+      <img
+        src="/pdtu-logo.png"
+        alt="Логотип"
+        className="absolute bottom-5 left-5 w-16 h-16 object-contain z-10"
+      />
     </main>
   );
 }

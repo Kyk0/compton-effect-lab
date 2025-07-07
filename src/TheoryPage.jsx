@@ -23,6 +23,11 @@ export default function TheoryPage() {
           />
         </div>
       </div>
+      <img
+        src="/pdtu-logo.png"
+        alt="Логотип"
+        className="absolute bottom-5 left-5 w-16 h-16 object-contain z-10"
+      />
     </main>
 );
 }

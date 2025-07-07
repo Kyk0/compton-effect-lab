@@ -3,13 +3,25 @@ import { Link } from "react-router-dom";
 function Home() {
   return (
     <main className="min-h-screen relative overflow-hidden">
-      <div
+      {/* <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url('/background.png')` }}
-      ></div>
+        style={{ backgroundImage: `url('/background1.jpeg')` }}
+      ></div> */}
+
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="/source.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      
 
       {/* blur */}
-      <div className="absolute inset-0 backdrop-blur-sm"></div>
+      <div className="absolute inset-0 backdrop-blur-md"></div>
 
       {/* box */}
       <div className="min-h-screen flex items-center justify-center">
