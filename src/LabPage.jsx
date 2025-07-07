@@ -17,18 +17,13 @@ const initialEnergies = {
 
 const angles = [0, 10, 20, 30, 40, 50];
 
-// compton shift
 function computeComptonScatteredEnergy(E_keV, angleDeg) {
   const electronRestKeV = 511;
   const theta = (angleDeg * Math.PI) / 180;
   return E_keV / (1 + (E_keV / electronRestKeV) * (1 - Math.cos(theta)));
 }
 
-// peak generation
-function generateMultiPeakData(
-  peaks,
-  { xStart = 0, xEnd = 2000, step = 10 } = {}
-) {
+function generateMultiPeakData(peaks, { xStart = 0, xEnd = 2000, step = 10 } = {}) {
   const data = [];
   for (let x = xStart; x <= xEnd; x += step) {
     const y = peaks.reduce((sum, { center, width = 20, amplitude = 1 }) => {
@@ -53,13 +48,18 @@ export default function LabPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const peaks = initialEnergies[element].map((E0) => ({
-    center: computeComptonScatteredEnergy(E0, angle),
-    width: 20,
-    amplitude: 1,
-  }));
-  const data = generateMultiPeakData(peaks);
+  const peaks = initialEnergies[element].map((E0, i) => {
+    const energy = computeComptonScatteredEnergy(E0, angle);
+    const angleFactor = Math.max(0.1, Math.cos((angle * Math.PI) / 180));
+    const lineIntensity = i === 0 ? 1.0 : 0.7;
+    return {
+      center: energy,
+      width: 20,
+      amplitude: lineIntensity * angleFactor,
+    };
+  });
 
+  const data = generateMultiPeakData(peaks);
   const xTicks = Array.from({ length: 11 }, (_, i) => i * 200);
   const yTicks = [0, 0.25, 0.5, 0.75, 1];
 
@@ -73,172 +73,165 @@ export default function LabPage() {
       <div className="absolute inset-0 backdrop-blur-sm backdrop-brightness-50 z-0 bg-black/70" />
 
       <div className="relative z-10 min-h-screen flex flex-col items-center p-6 gap-10">
-        {/* back button */}
         <BackButton />
 
-       {/* settings */}
-<div className="bg-gray-900/70 p-3 rounded-xl border border-gray-600 w-full md:w-1/2 text-center mt-24 transition-opacity duration-300 text-sm">
-  <h2 className="text-xl font-semibold mb-4">Налаштування</h2>
-  <div className="flex flex-col md:flex-row justify-center items-center gap-4">
-    <div className="w-full md:w-1/2">
-      <label className="text-sm block mb-1">Елемент:</label>
-      <select
-        className="bg-gray-700 p-2 rounded border border-gray-500 text-white w-full"
-        value={element}
-        onChange={(e) => setElement(e.target.value)}
-      >
-        {Object.keys(initialEnergies).map((el) => (
-          <option key={el} value={el}>
-            {el}
-          </option>
-        ))}
-      </select>
-    </div>
-    <div className="w-full md:w-1/2">
-      <label className="text-sm block mb-1">Кут розсіяння:</label>
-      <select
-        className="bg-gray-700 p-2 rounded border border-gray-500 text-white w-full"
-        value={angle}
-        onChange={(e) => setAngle(parseInt(e.target.value, 10))}
-      >
-        {angles.map((a) => (
-          <option key={a} value={a}>
-            {a}°
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
-</div>
+        <div className="bg-gray-900/70 p-3 rounded-xl border border-gray-600 w-full md:w-1/2 text-center mt-24 transition-opacity duration-300 text-sm">
+          <h2 className="text-xl font-semibold mb-4">Налаштування</h2>
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4">
+            <div className="w-full md:w-1/2">
+              <label className="text-sm block mb-1">Елемент:</label>
+              <select
+                className="bg-gray-700 p-2 rounded border border-gray-500 text-white w-full"
+                value={element}
+                onChange={(e) => setElement(e.target.value)}
+              >
+                {Object.keys(initialEnergies).map((el) => (
+                  <option key={el} value={el}>
+                    {el}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="w-full md:w-1/2">
+              <label className="text-sm block mb-1">Кут розсіяння:</label>
+              <select
+                className="bg-gray-700 p-2 rounded border border-gray-500 text-white w-full"
+                value={angle}
+                onChange={(e) => setAngle(parseInt(e.target.value, 10))}
+              >
+                {angles.map((a) => (
+                  <option key={a} value={a}>
+                    {a}°
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
 
-{/* cables image */}
-{isWideScreen ? (
-  <img
-    src="/cables.png"
-    alt="Cables"
-    className="absolute"
-    style={{
-      top: "70%",
-      left: "50%", 
-      width: "400px", 
-      transform: "translate(-50%, -50%) rotate(23deg)",
-      zIndex: 0,
-    }}
-  />
-) : (
-  <img
-    src="/cables.png"
-    alt="Cables"
-    className="absolute"
-    style={{
-      top: "62%",
-      left: "56%", 
-      width: "320px", 
-      transform: "translate(-50%, -50%) rotate(115deg)",
-      zIndex: 0,
-    }}
-  />
-)}
-{/* layout */}
-<div className="flex flex-wrap justify-center items-center gap-10 w-full md:w-4/5 mt-20">
-  {/* setup image and power button */}
-  <div className="relative">
-    <img
-      src="/compton.png"
-      alt="Compton setup"
-      style={{
-        width: "520px",
-        maxWidth: "60vw",
-      }}
-    />
-    <div
-      className="absolute"
-      style={{
-        top: "86%",
-        left: "66%",
-        width: "10%",
-        height: "12%",
-        transform: "translate(-50%, -50%)",
-        zIndex: 20,
-      }}
-    >
-      <button
-        onClick={() => setIsOn(!isOn)}
-        className={`w-full h-full relative text-white font-bold rounded shadow-lg text-xs border border-gray-700 ${
-          isOn
-            ? "bg-green-600 hover:bg-green-700"
-            : "bg-red-600 hover:bg-red-700"
-        }`}
-      >
-        {isOn ? "On" : "Off"}
-      </button>
-    </div>
-  </div>
+        {isWideScreen ? (
+          <img
+            src="/cables.png"
+            alt="Cables"
+            className="absolute"
+            style={{
+              top: "70%",
+              left: "50%",
+              width: "400px",
+              transform: "translate(-50%, -50%) rotate(23deg)",
+              zIndex: 0,
+            }}
+          />
+        ) : (
+          <img
+            src="/cables.png"
+            alt="Cables"
+            className="absolute"
+            style={{
+              top: "62%",
+              left: "56%",
+              width: "320px",
+              transform: "translate(-50%, -50%) rotate(115deg)",
+              zIndex: 0,
+            }}
+          />
+        )}
 
-  {/* screen and chart */}
-  <div className="relative w-full max-w-[500px] aspect-[16/9]">
-    <img
-      src="/screen.png"
-      alt="Display"
-      className="w-full h-full object-contain"
-    />
-
-    <div
-      className="absolute transition-colors duration-300"
-      style={{
-        top: "6%",
-        left: "6.2%",
-        width: "62.5%",
-        height: "60%",
-        backgroundColor: "#000",
-        borderRadius: "12px",
-        overflow: "hidden",
-      }}
-    >
-      {/* chart */}
-      {isOn && (
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={data}
-            margin={{ top: 10, right: 10, bottom: -10, left: -25 }}
-          >
-            <XAxis
-              dataKey="x"
-              ticks={xTicks}
-              tick={{ fontSize: 10, fill: "#ccc" }}
-              tickFormatter={(v) => (v % 400 === 0 ? v : "")}
-            />
-            <YAxis
-              ticks={yTicks}
-              tick={{ fontSize: 10, fill: "#ccc" }}
-            />
-            <Tooltip
-              labelFormatter={(label) => `X: ${label} кеВ`}
-              formatter={(value) => [`${value.toFixed(3)}`, "Y"]}
-              contentStyle={{
-                backgroundColor: "#222",
-                borderColor: "#444",
-                fontSize: "12px",
+        <div className="flex flex-wrap justify-center items-center gap-10 w-full md:w-4/5 mt-20">
+          <div className="relative">
+            <img
+              src="/compton.png"
+              alt="Compton setup"
+              style={{
+                width: "520px",
+                maxWidth: "60vw",
               }}
             />
-            <Line
-              type="monotone"
-              dataKey="y"
-              stroke="#00ff00"
-              strokeWidth={2}
-              dot={false}
+            <div
+              className="absolute"
+              style={{
+                top: "86%",
+                left: "66%",
+                width: "10%",
+                height: "12%",
+                transform: "translate(-50%, -50%)",
+                zIndex: 20,
+              }}
+            >
+              <button
+                onClick={() => setIsOn(!isOn)}
+                className={`w-full h-full relative text-white font-bold rounded shadow-lg text-xs border border-gray-700 ${
+                  isOn
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-red-600 hover:bg-red-700"
+                }`}
+              >
+                {isOn ? "On" : "Off"}
+              </button>
+            </div>
+          </div>
+
+          <div className="relative w-full max-w-[500px] aspect-[16/9]">
+            <img
+              src="/screen.png"
+              alt="Display"
+              className="w-full h-full object-contain"
             />
-          </LineChart>
-        </ResponsiveContainer>
-      )}
-    </div>
-  </div>
-</div>
+            <div
+              className="absolute transition-colors duration-300"
+              style={{
+                top: "6%",
+                left: "6.2%",
+                width: "62.5%",
+                height: "60%",
+                backgroundColor: "#000",
+                borderRadius: "12px",
+                overflow: "hidden",
+              }}
+            >
+              {isOn && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={data}
+                    margin={{ top: 10, right: 10, bottom: -10, left: -25 }}
+                  >
+                    <XAxis
+                      dataKey="x"
+                      ticks={xTicks}
+                      tick={{ fontSize: 10, fill: "#ccc" }}
+                      tickFormatter={(v) => (v % 400 === 0 ? v : "")}
+                    />
+                    <YAxis
+                      ticks={yTicks}
+                      tick={{ fontSize: 10, fill: "#ccc" }}
+                    />
+                    <Tooltip
+                      labelFormatter={(label) => `${label} кеВ`}
+                      formatter={(value) => [`${value.toFixed(3)} ВІ`,]}
+                      contentStyle={{
+                        backgroundColor: "#222",
+                        borderColor: "#444",
+                        fontSize: "12px",
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="y"
+                      stroke="#00ff00"
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+        </div>
         <img
-        src="/pdtu-logo.png"
-        alt="Логотип"
-        className="absolute bottom-5 left-5 w-16 h-16 object-contain z-10"
-      />
+          src="/pdtu-logo.png"
+          alt="Логотип"
+          className="absolute bottom-5 left-5 w-16 h-16 object-contain z-10"
+        />
       </div>
     </main>
   );

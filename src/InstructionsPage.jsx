@@ -6,7 +6,7 @@ export default function InstructionsPage() {
       {/* background */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: 'url(background.png)' }}
+        style={{ backgroundImage: 'url(background1.jpeg)' }}
       />
       <div className="absolute inset-0 backdrop-blur-sm bg-black/70 z-0" />
 
