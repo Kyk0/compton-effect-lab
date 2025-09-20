@@ -72,11 +72,18 @@ function Home() {
         </div>
       </div>
 
-      <img
-        src="/pdtu-logo.png"
-        alt="Логотип"
-        className="absolute bottom-5 left-5 w-16 h-16 object-contain z-10"
-      />
+      <div className="absolute bottom-5 left-5 flex items-center z-10">
+        <img
+          src="/pdtu-logo.png"
+          alt="Логотип"
+          className="w-16 h-16 object-contain"
+        />
+        <span className="ml-3 mt-2 text-white text-lg font-semibold">
+          Kyrylo Kolesnichenko
+        </span>
+      </div>
+      
+      
     </main>
   );
 }
