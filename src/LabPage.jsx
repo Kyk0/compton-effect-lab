@@ -166,7 +166,7 @@ export default function LabPage() {
                     : "bg-red-600 hover:bg-red-700"
                 }`}
               >
-                {isOn ? "On" : "Off"}
+                {isOn ? "Вкл" : "Викл"}
               </button>
             </div>
           </div>
