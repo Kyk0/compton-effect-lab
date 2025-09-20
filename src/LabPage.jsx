@@ -37,7 +37,7 @@ function generateMultiPeakData(peaks, { xStart = 0, xEnd = 2000, step = 10 } = {
 
 export default function LabPage() {
   const [element, setElement] = useState("Y-88");
-  const [angle, setAngle] = useState(50);
+  const [angle, setAngle] = useState(0);
   const [isOn, setIsOn] = useState(false);
 
   const [isWideScreen, setIsWideScreen] = useState(window.innerWidth >= 1409);
