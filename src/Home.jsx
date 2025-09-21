@@ -79,7 +79,7 @@ function Home() {
           className="w-16 h-16 object-contain"
         />
         <span className="ml-3 mt-2 text-white text-lg font-semibold">
-          Kyrylo Kolesnichenko
+          Kyrylo Kolesnichenko студент гр. КН-23
         </span>
       </div>
       
